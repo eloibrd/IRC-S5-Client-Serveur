@@ -71,9 +71,9 @@ int renvoie_nom(int client_socket_fd, char *data) {
 }
 
 int  recois_numeros_calcule(int client_socket_fd, char *data){
-    int data_size = read (client_socket_fd, (void *) data, sizeof(data));
+    int data_size_read = read (client_socket_fd, (void *) data, sizeof(data));
 
-    if (data_size < 0) {
+    if (data_size_read < 0) {
         perror("erreur lecture");
         return(EXIT_FAILURE);
     }
@@ -83,46 +83,46 @@ int  recois_numeros_calcule(int client_socket_fd, char *data){
     printf ("Message Calcule recu: %s\n", data);
     char str[100];
     sscanf(data, "%s", str);
+    printf("'%s'\n", str);
+    int init_size = strlen(str);
+    char delim[] = ":";
 
-        int init_size = strlen(str);
-        char delim[] = ":";
+    char *ptr = strtok(str, delim);
+    for (int i = 0; i < 1; i++)
+    {
+        ptr = strtok(NULL, delim);
+    }
+    printf("'%s'\n", ptr);
 
-        char *ptr = strtok(str, delim);
-        for (int i = 0; i < 1; i++)
-        {
-            ptr = strtok(NULL, delim);
-        }
-        printf("'%s'\n", ptr);
+    char *operands = strtok(ptr, " ");
 
-        char *operands = strtok(ptr, " ");
+    char *op1 = operands;
+    operands = strtok(NULL, " ");
+    int op2 = atoi(operands);
+    operands = strtok(NULL, " ");
+    int op3 = atoi(operands);
 
-        char *op1 = operands;
-        operands = strtok(NULL, " ");
-        int op2 = atoi(operands);
-        operands = strtok(NULL, " ");
-        int op3 = atoi(operands);
+    // printf("op1:%s\n",op1);
+    // printf("op2:%d\n",op2);
+    // printf("op3:%d\n",op3);
 
-        // printf("op1:%s\n",op1);
-        // printf("op2:%d\n",op2);
-        // printf("op3:%d\n",op3);
-
-        int result;
-        if(strcmp("+",op1)==0){
-            result= op2 + op3;
-        }else if(strcmp("-",op1)==0){
-            result= op2 - op3;
-        }else if(strcmp("*",op1)==0){
-            result= op2 * op3;
-        }else if(strcmp("/",op1)==0){
-            result= op2 / op3;
-        }
+    int result;
+    if(strcmp("+",op1)==0){
+        result= op2 + op3;
+    }else if(strcmp("-",op1)==0){
+        result= op2 - op3;
+    }else if(strcmp("*",op1)==0){
+        result= op2 * op3;
+    }else if(strcmp("/",op1)==0){
+        result= op2 / op3;
+    }
     char value[500];
-    char* str = "calcule: ";
+    char* str2 = "calcule: ";
     sprintf(value, "%d", result);
     char answer[500];
-    strcat(answer,str);
+    strcat(answer,str2);
     strcat(answer,value);
-    int data_size = write (client_socket_fd, (void *) answer, strlen(answer));
+    int data_size_write = write (client_socket_fd, (void *) answer, strlen(answer));
     //printf("result:%d",result);
 }
 
