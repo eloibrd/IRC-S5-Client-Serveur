@@ -158,7 +158,7 @@ int recois_envoie_message(int socketfd) {
         perror("accept");
         return(EXIT_FAILURE);
     }
-
+    
     // la réinitialisation de l'ensemble des données
     memset(data, 0, sizeof(data));
 
