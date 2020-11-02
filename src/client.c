@@ -13,8 +13,8 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
-#include "src/client.h"
-#include "src/bmp.h"
+#include "client.h"
+#include "bmp.h"
 
 /*
  * Fonction d'envoi et de réception de messages
@@ -146,8 +146,8 @@ int main(int argc, char **argv) {
     perror("connection serveur");
     exit(EXIT_FAILURE);
   }
-  //envoie_recois_message(socketfd);
-  envoie_couleurs(socketfd, argv[1]);
+  envoie_recois_message(socketfd);
+  // envoie_couleurs(socketfd, argv[1]);
 
   close(socketfd);
 }
