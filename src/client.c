@@ -98,7 +98,7 @@ int envoie_couleurs(int socketfd, char *pathname) {
   return 0;
 }
 
-int envoie_nom_de_client(int socketfd, char *nom){
+int envoie_nom_de_client(int socketfd){
   char data[1024];
   // la réinitialisation de l'ensemble des données
   memset(data, 0, sizeof(data));
@@ -115,9 +115,26 @@ int envoie_nom_de_client(int socketfd, char *nom){
     exit(EXIT_FAILURE);
   }
   return 0;
-
 }
 
+int envoie_operateur_numero(int socketfd){
+  char data[1024];
+  // la réinitialisation de l'ensemble des données
+  memset(data, 0, sizeof(data));
+  // Demandez à l'utilisateur d'entrer un message
+  char message[100];
+  printf("Votre calcule (max 100 caracteres): ");
+  fgets(message, 1024, stdin);
+  strcpy(data, "calcule: ");
+  strcat(data, message);
+
+  int write_status = write(socketfd, data, strlen(data));
+  if ( write_status < 0 ) {
+    perror("erreur ecriture");
+    exit(EXIT_FAILURE);
+  }
+  return 0;
+}
 
 int main(int argc, char **argv) {
   int socketfd;
@@ -146,7 +163,10 @@ int main(int argc, char **argv) {
     perror("connection serveur");
     exit(EXIT_FAILURE);
   }
-  envoie_recois_message(socketfd);
+
+  // requêtes au serveur
+  envoie_nom_de_client(socketfd);
+ // envoie_recois_message(socketfd);
   // envoie_couleurs(socketfd, argv[1]);
 
   close(socketfd);

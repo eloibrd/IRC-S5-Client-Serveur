@@ -37,6 +37,7 @@ L'objectif du projet est de créer un environnement client serveur dans lequel l
 ### D. _Références_
 
 -   [StackOverflow](https://stackoverflow.com/)
+-   [Ecriture d'un Makefile](https://ensiwiki.ensimag.fr/images/e/eb/Makefile.pdf)
 
 ### E. _Difficulté_
 

@@ -1,4 +1,5 @@
 ## fichiers de complation c et exécutables à ignorer
+*.o
 src/*.o
 client
 serveur
