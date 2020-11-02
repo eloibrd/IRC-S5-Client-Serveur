@@ -53,11 +53,21 @@ void plot(char *data) {
 /* renvoyer un message (*data) au client (client_socket_fd)
  */
 int renvoie_message(int client_socket_fd, char *data) {
-    int data_size = write (client_socket_fd, (void *) data, strlen(data));
+    // réponse saisie par l'utilisateur 
+    char response[1024];
+    // la réinitialisation de l'ensemble des données
+    memset(response, 0, sizeof(response));
+    // Demandez à l'utilisateur d'entrer un message
+    char message[100];
+    printf("Votre réponse au client (max 1000 caracteres): ");
+    fgets(message, 1024, stdin);
+    strcpy(response, "message: ");
+    strcat(response, message);
 
-    if (data_size < 0) {
+    int write_status = write(client_socket_fd, response, strlen(data));
+    if ( write_status < 0 ) {
         perror("erreur ecriture");
-        return(EXIT_FAILURE);
+        exit(EXIT_FAILURE);
     }
 }
 
@@ -83,7 +93,6 @@ int  recois_numeros_calcule(int client_socket_fd, char *data){
     printf ("Message Calcule recu: %s\n", data);
     char str[100];
     sscanf(data, "%s", str);
-    printf("'%s'\n", str);
     int init_size = strlen(str);
     char delim[] = ":";
 
@@ -163,7 +172,7 @@ int recois_envoie_message(int socketfd) {
 
     //Si le message commence par le mot: 'message:'
     if (strcmp(code, "message:") == 0) {
-         printf ("Message recu: %s\n", data);
+        printf ("Message recu: %s\n", data);
         renvoie_message(client_socket_fd, data);
     }
     else if (strcmp(code, "nom:") == 0) {
@@ -217,8 +226,9 @@ int main() {
     // Écouter les messages envoyés par le client
     listen(socketfd, 10);
 
-    //Lire et répondre au client
+    printf("----- Starting Server ----- \n\n");
 
+    //Lire et répondre à une requête client client
     recois_envoie_message(socketfd);
 
     return 0;
