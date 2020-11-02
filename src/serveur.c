@@ -181,7 +181,6 @@ int recois_envoie_message(int socketfd) {
         renvoie_nom(client_socket_fd, data);
     }
     else if (strcmp(code, "calcule:") == 0) {
-        printf ("Client connecté : %s\n", data);
         recois_numeros_calcule(client_socket_fd, data);
     }
     else {
