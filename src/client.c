@@ -113,6 +113,15 @@ int envoie_nom_de_client(int socketfd){
         perror("erreur ecriture");
         exit(EXIT_FAILURE);
     }
+
+    int read_status = read(socketfd, data, sizeof(data));
+    if ( read_status < 0 ) {
+        perror("erreur lecture");
+        return -1;
+    }
+
+    printf("Message recu: %s\n", data);
+
     return 0;
 }
 
@@ -132,6 +141,15 @@ int envoie_operateur_numero(int socketfd){
         perror("erreur ecriture");
         exit(EXIT_FAILURE);
     }
+
+    int read_status = read(socketfd, data, sizeof(data));
+    if ( read_status < 0 ) {
+        perror("erreur lecture");
+        return -1;
+    }
+
+    printf("Message recu: %s\n", data);
+
     return 0;
 }
 
@@ -165,10 +183,10 @@ int main(int argc, char **argv) {
 
     // requêtes au serveur
 
-    // envoie_nom_de_client(socketfd);
-     envoie_recois_message(socketfd);
-    // envoie_couleurs(socketfd, argv[1]);
-    // envoie_operateur_numero(socketfd);
+    //envoie_nom_de_client(socketfd);
+    //envoie_recois_message(socketfd);
+    //envoie_couleurs(socketfd, argv[1]);
+    envoie_operateur_numero(socketfd);
 
     close(socketfd);
 }

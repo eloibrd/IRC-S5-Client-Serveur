@@ -91,17 +91,18 @@ int  recois_numeros_calcule(int client_socket_fd, char *data){
     *Récéption d'un message de type calcule
     */
     printf ("Message Calcule recu: %s\n", data);
-    char str[100];
-    sscanf(data, "%s", str);
-    int init_size = strlen(str);
+    // char str[100];
+    // sscanf(data, "%s", str);
+
+    int init_size = strlen(data);
     char delim[] = ":";
 
-    char *ptr = strtok(str, delim);
+    char *ptr = strtok(data, delim);
     for (int i = 0; i < 1; i++)
     {
         ptr = strtok(NULL, delim);
     }
-    printf("'%s'\n", ptr);
+    printf("Calc'%s'\n", ptr);
 
     char *operands = strtok(ptr, " ");
 
@@ -111,9 +112,9 @@ int  recois_numeros_calcule(int client_socket_fd, char *data){
     operands = strtok(NULL, " ");
     int op3 = atoi(operands);
 
-    // printf("op1:%s\n",op1);
-    // printf("op2:%d\n",op2);
-    // printf("op3:%d\n",op3);
+    printf("op1:%s\n",op1);
+    printf("op2:%d\n",op2);
+    printf("op3:%d\n",op3);
 
     int result;
     if(strcmp("+",op1)==0){
@@ -125,14 +126,20 @@ int  recois_numeros_calcule(int client_socket_fd, char *data){
     }else if(strcmp("/",op1)==0){
         result= op2 / op3;
     }
+    printf("result:%d",result);
     char value[500];
     char* str2 = "calcule: ";
     sprintf(value, "%d", result);
     char answer[500];
     strcat(answer,str2);
     strcat(answer,value);
+
     int data_size_write = write (client_socket_fd, (void *) answer, strlen(answer));
-    //printf("result:%d",result);
+
+    if (data_size_write< 0) {
+        perror("erreur lecture");
+        return(EXIT_FAILURE);
+    }
 }
 
 /* accepter la nouvelle connection d'un client et lire les données
