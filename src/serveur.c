@@ -53,7 +53,7 @@ void plot(char *data) {
 /* renvoyer un message (*data) au client (client_socket_fd)
  */
 int renvoie_message(int client_socket_fd, char *data) {
-    // réponse saisie par l'utilisateur 
+    // réponse saisie par l'utilisateur
     char response[1024];
     // la réinitialisation de l'ensemble des données
     memset(response, 0, sizeof(response));
@@ -81,12 +81,6 @@ int renvoie_nom(int client_socket_fd, char *data) {
 }
 
 int  recois_numeros_calcule(int client_socket_fd, char *data){
-    int data_size_read = read (client_socket_fd, (void *) data, sizeof(data));
-
-    if (data_size_read < 0) {
-        perror("erreur lecture");
-        return(EXIT_FAILURE);
-    }
     /*
     *Récéption d'un message de type calcule
     */
@@ -128,7 +122,7 @@ int  recois_numeros_calcule(int client_socket_fd, char *data){
     }
     printf("result:%d",result);
     char value[500];
-    char* str2 = "calcule: ";
+    char* str2 = "Resultat: ";
     sprintf(value, "%d", result);
     char answer[500];
     strcat(answer,str2);
@@ -187,6 +181,7 @@ int recois_envoie_message(int socketfd) {
         renvoie_nom(client_socket_fd, data);
     }
     else if (strcmp(code, "calcule:") == 0) {
+        printf ("Client connecté : %s\n", data);
         recois_numeros_calcule(client_socket_fd, data);
     }
     else {

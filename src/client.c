@@ -142,6 +142,8 @@ int envoie_operateur_numero(int socketfd){
         exit(EXIT_FAILURE);
     }
 
+    memset(data, 0, sizeof(data));
+    
     int read_status = read(socketfd, data, sizeof(data));
     if ( read_status < 0 ) {
         perror("erreur lecture");
