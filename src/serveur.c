@@ -214,7 +214,7 @@ int recois_envoie_message(int socketfd) {
     char code_lim[10];
     char code_lim2[10];
     char code_value[10];
-     printf ("Message recu: %s\n", data);
+    printf ("Message recu: %s\n", data);
     sscanf(data, "%s %s %s %s", code_balise,code_lim,code_lim2,code_value);
     printf("Code value:%s \n",code_value);
     //Si le message commence par le mot: 'message:'
@@ -230,7 +230,7 @@ int recois_envoie_message(int socketfd) {
         printf ("Client connecté : %s\n", data);
         recois_numeros_calcule(client_socket_fd, data);
     }
-    else if (strcmp(code, "couleurs:") == 0) {
+    else if (strcmp(code_value, "couleurs:") == 0) {
         recois_chaine_couleurs(client_socket_fd, data);
     }
     else {
