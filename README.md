@@ -16,7 +16,7 @@ L'objectif du projet est de créer un environnement client serveur dans lequel l
 
 1. Le client envoie son nom puis le serveur renvoie son nom comme accusé de réception - **FAIT**
 2. Le client envoie un message simple et le serveur renvoie une réponse - **FAIT**
-3. Le client envoie une opération en 3 requêtes et le serveur renvoie le résultat de l'opération
+3. Le client envoie une opération en 3 requêtes et le serveur renvoie le résultat de l'opération - **FAIT**
 4. Le client envoie N couleurs et le serveur les enregistre dans un fichier
 5. Le client envoie N balises et le serveur les enregistre dans un fichier
 
