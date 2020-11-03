@@ -15,6 +15,7 @@
 
 #include "client.h"
 #include "bmp.h"
+#include "shared.h"
 
 /*
  * Fonction d'envoi et de réception de messages
@@ -31,9 +32,11 @@ int envoie_recois_message(int socketfd) {
     char message[100];
     printf("Votre message (max 1000 caracteres): ");
     fgets(message, 1024, stdin);
-    strcpy(data, "message: ");
-    strcat(data, message);
+    //strcpy(data, "message: ");
+    //strcat(data, message);
 
+    snprintf(data,sizeof(data),"{ \"code\" : \"message\", \"valeurs\" : [\"%s\"] }",message);
+	printf("JSON SEND :%s \n",data);
     int write_status = write(socketfd, data, strlen(data));
     if ( write_status < 0 ) {
         perror("erreur ecriture");
@@ -143,7 +146,7 @@ int envoie_operateur_numero(int socketfd){
     }
 
     memset(data, 0, sizeof(data));
-    
+
     int read_status = read(socketfd, data, sizeof(data));
     if ( read_status < 0 ) {
         perror("erreur lecture");
@@ -186,9 +189,9 @@ int main(int argc, char **argv) {
     // requêtes au serveur
 
     //envoie_nom_de_client(socketfd);
-    //envoie_recois_message(socketfd);
+    envoie_recois_message(socketfd);
     //envoie_couleurs(socketfd, argv[1]);
-    envoie_operateur_numero(socketfd);
+    //envoie_operateur_numero(socketfd);
 
     close(socketfd);
 }
