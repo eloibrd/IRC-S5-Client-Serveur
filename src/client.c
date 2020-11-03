@@ -97,6 +97,36 @@ int envoie_couleurs(int socketfd, char *pathname) {
     return 0;
 }
 
+int envoie_chaine_couleurs(int socketfd){
+    char data[1024];
+    // la réinitialisation de l'ensemble des données
+    memset(data, 0, sizeof(data));
+    // Demandez à l'utilisateur d'entrer les couelurs
+    char message[1000];
+    printf("Vos couleurs (format rgb) (max 1000 caractères): ");
+    fgets(message, 1024, stdin);
+    strcpy(data, "couleurs: ");
+    strcat(data, message);
+    int write_status = write(socketfd, data, strlen(data));
+    if ( write_status < 0 ) {
+        perror("erreur ecriture");
+        exit(EXIT_FAILURE);
+    }
+
+    // réponse du serveur
+    char response[100];
+    // la réinitialisation de l'ensemble des données
+    memset(response, 0, sizeof(response));
+    int read_status = read(socketfd, response, sizeof(response));
+    if ( read_status < 0 ) {
+        perror("erreur lecture");
+        return -1;
+    }
+
+    printf("Message recu: %s\n", response);
+    return 0;
+}
+
 int envoie_nom_de_client(int socketfd){
     char data[1024];
     // la réinitialisation de l'ensemble des données
@@ -187,8 +217,9 @@ int main(int argc, char **argv) {
 
     //envoie_nom_de_client(socketfd);
     //envoie_recois_message(socketfd);
+    envoie_chaine_couleurs(socketfd);
     //envoie_couleurs(socketfd, argv[1]);
-    envoie_operateur_numero(socketfd);
+    //envoie_operateur_numero(socketfd);
 
     close(socketfd);
 }

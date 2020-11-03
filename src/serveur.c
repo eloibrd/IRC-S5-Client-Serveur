@@ -136,6 +136,29 @@ int  recois_numeros_calcule(int client_socket_fd, char *data){
     }
 }
 
+int recois_chaine_couleurs(int client_socket_fd, char *data) {    
+    char couleurs[1024];
+    // la réinitialisation de l'ensemble des données
+    memset(couleurs, 0, sizeof(couleurs));
+    // parse la string pour savoir combien de couleurs ont étés recues
+    const char separator = ':';
+    char * const sep_at = strchr(data, separator);
+    if(sep_at != NULL)
+    {
+        *sep_at = '\0'; /* overwrite first separator, creating two strings. */
+        strcpy(couleurs, sep_at +2);
+    }
+
+    printf("chaine couleurs : %s",couleurs);
+    // réponse au client
+    char response[] = "couleurs reçues";
+    int write_status = write(client_socket_fd, response, strlen(response));
+    if ( write_status < 0 ) {
+        perror("erreur ecriture");
+        exit(EXIT_FAILURE);
+    }
+}
+
 /* accepter la nouvelle connection d'un client et lire les données
  * envoyées par le client. En suite, le serveur envoie un message
  * en retour
@@ -152,7 +175,7 @@ int recois_envoie_message(int socketfd) {
         perror("accept");
         return(EXIT_FAILURE);
     }
-    
+    printf("client connecté\n\n");
     // la réinitialisation de l'ensemble des données
     memset(data, 0, sizeof(data));
 
@@ -163,13 +186,15 @@ int recois_envoie_message(int socketfd) {
         perror("erreur lecture");
         return(EXIT_FAILURE);
     }
-
+    printf("data received\n\n");
     /*
     * extraire le code des données envoyées par le client.
     * Les données envoyées par le client peuvent commencer par le mot "message :" ou un autre mot.
     */
     char code[10];
     sscanf(data, "%s", code);
+
+    printf("code extrait : %s\n\n", code);
 
     //Si le message commence par le mot: 'message:'
     if (strcmp(code, "message:") == 0) {
@@ -182,6 +207,9 @@ int recois_envoie_message(int socketfd) {
     }
     else if (strcmp(code, "calcule:") == 0) {
         recois_numeros_calcule(client_socket_fd, data);
+    }
+    else if (strcmp(code, "couleurs:") == 0) {
+        recois_chaine_couleurs(client_socket_fd, data);
     }
     else {
         plot(data);
