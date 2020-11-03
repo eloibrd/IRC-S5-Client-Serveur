@@ -16,6 +16,7 @@
 
 #include "serveur.h"
 
+
 void plot(char *data) {
 
     //Extraire le compteur et les couleurs RGB
@@ -61,10 +62,12 @@ int renvoie_message(int client_socket_fd, char *data) {
     char message[100];
     printf("Votre réponse au client (max 1000 caracteres): ");
     fgets(message, 1024, stdin);
-    strcpy(response, "message: ");
-    strcat(response, message);
+    //strcpy(response, "message: ");
+    //strcat(response, message);
+    snprintf(response,sizeof(response),"{ \"code\" : \"message\", \"valeurs\" : [\"%s\"] }",message);
+    printf("JSON SEND :%s \n",response);
 
-    int write_status = write(client_socket_fd, response, strlen(data));
+    int write_status = write(client_socket_fd, response, strlen(response));
     if ( write_status < 0 ) {
         perror("erreur ecriture");
         exit(EXIT_FAILURE);
@@ -189,6 +192,7 @@ int recois_envoie_message(int socketfd) {
         perror("accept");
         return(EXIT_FAILURE);
     }
+
     printf("client connecté\n\n");
     // la réinitialisation de l'ensemble des données
     memset(data, 0, sizeof(data));
@@ -205,21 +209,25 @@ int recois_envoie_message(int socketfd) {
     * extraire le code des données envoyées par le client.
     * Les données envoyées par le client peuvent commencer par le mot "message :" ou un autre mot.
     */
-    char code[10];
-    sscanf(data, "%s", code);
 
-    printf("code extrait : %s\n\n", code);
-
+    char code_balise[10];
+    char code_lim[10];
+    char code_lim2[10];
+    char code_value[10];
+     printf ("Message recu: %s\n", data);
+    sscanf(data, "%s %s %s %s", code_balise,code_lim,code_lim2,code_value);
+    printf("Code value:%s \n",code_value);
     //Si le message commence par le mot: 'message:'
-    if (strcmp(code, "message:") == 0) {
-        printf ("Message recu: %s\n", data);
+    if (strstr(code_value, "message") != NULL) {
+        //printf ("Message recu aprés sscanf: %s\n", data);
         renvoie_message(client_socket_fd, data);
     }
-    else if (strcmp(code, "nom:") == 0) {
+    else if (strcmp(code_value, "\"nom\"") == 0) {
         printf ("Client connecté : %s\n", data);
         renvoie_nom(client_socket_fd, data);
     }
-    else if (strcmp(code, "calcule:") == 0) {
+    else if (strcmp(code_value, "calcule:") == 0) {
+        printf ("Client connecté : %s\n", data);
         recois_numeros_calcule(client_socket_fd, data);
     }
     else if (strcmp(code, "couleurs:") == 0) {
