@@ -140,16 +140,30 @@ int recois_chaine_couleurs(int client_socket_fd, char *data) {
     char couleurs[1024];
     // la réinitialisation de l'ensemble des données
     memset(couleurs, 0, sizeof(couleurs));
-    // parse la string pour savoir combien de couleurs ont étés recues
-    const char separator = ':';
-    char * const sep_at = strchr(data, separator);
+    // split la string pour enlever le code
+    char separator = ':';
+    char * sep_at = strchr(data, separator);
     if(sep_at != NULL)
     {
-        *sep_at = '\0'; /* overwrite first separator, creating two strings. */
+        *sep_at = '\0'; // cut la chaine au séparateur
+        // prendre en compte l'espace après les ':' du code
         strcpy(couleurs, sep_at +2);
     }
-
     printf("chaine couleurs : %s",couleurs);
+
+    // analyse chaine couleur
+    // parse la string pour savoir combien de couleurs ont étés recues
+    separator = ',';
+    int nbcouleurs = -1;
+    sep_at = strchr(couleurs, separator);
+    if(sep_at != NULL){
+        *sep_at = '\0'; 
+        nbcouleurs = atoi(couleurs);
+        strcpy(couleurs, sep_at + 1);
+    }
+
+    printf("%d couleurs : %s\n", nbcouleurs, couleurs);
+
     // réponse au client
     char response[] = "couleurs reçues";
     int write_status = write(client_socket_fd, response, strlen(response));
