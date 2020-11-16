@@ -110,6 +110,7 @@ int envoie_chaine_couleurs(int socketfd){
     memset(data, 0, sizeof(data));
     // Demandez à l'utilisateur d'entrer les couleurs
     char message[100];
+    printf("Merci d'envoyer vos couleurs RGB sous la forme 'nbcouleurs,#rrggbb,#rrggbb...' (ex: 2,#ffffff,#0066FF)\n");
     printf("Vos couleurs (format rgb) (max 100 caractères): ");
     fgets(message, 1024, stdin);
     snprintf(data,sizeof(data),"{ \"code\" : \"couleurs\" , \"valeurs\" : [\"%s\"] }",message);
@@ -131,8 +132,10 @@ int envoie_chaine_couleurs(int socketfd){
         perror("erreur lecture");
         return -1;
     }
-
-    printf("Message recu: %s\n", response);
+    char value[100]="";
+    char code_value[20];
+    sscanf(response, "{ \"code\" : %s , \"valeurs\" : [\" %[^\t\n\"] \"] }",code_value,value);
+    printf("Message recu du serveur: %s\n",value);
     return 0;
 }
 
@@ -142,6 +145,7 @@ int envoie_balises(int socketfd){
     memset(data, 0, sizeof(data));
     // Demandez à l'utilisateur d'entrer les couelurs
     char message[100];
+    printf("Merci d'envoyer vos balises sous la forme 'nbbalises,#balise1,#balise2...' (ex: 2,#toto,#arbre)\n");
     printf("Vos balises (max 100 caractères): ");
     fgets(message, 1024, stdin);
     snprintf(data,sizeof(data),"{ \"code\" : \"balises\" , \"valeurs\" : [\"%s\"] }",message);
@@ -163,8 +167,10 @@ int envoie_balises(int socketfd){
         perror("erreur lecture");
         return -1;
     }
-
-    printf("Message recu: %s\n", response);
+    char value[100]="";
+    char code_value[20];
+    sscanf(response, "{ \"code\" : %s , \"valeurs\" : [\" %[^\t\n\"] \"] }",code_value,value);
+    printf("Message recu du serveur: %s\n",value);
     return 0;
 }
 
@@ -193,11 +199,10 @@ int envoie_nom_de_client(int socketfd){
         perror("erreur lecture");
         return -1;
     }
-    printf("JSON RECEIVED %s\n",data);
     char value[100]="";
     char code_value[20];
-    sscanf(data, "{ \"code\" : %s , \"valeurs\" : [\" %s \"] }",code_value,value);    printf("code : %s\n",code_value);
-    printf("Le serveur a bien reçu votre nom : %s\n",value);
+    sscanf(data, "{ \"code\" : %s , \"valeurs\" : [\" %[^\t\n\"] \"] }",code_value,value);
+    printf("Le serveur a bien reçu votre nom %s\n",value);
 
     return 0;
 }
@@ -208,6 +213,7 @@ int envoie_operateur_numero(int socketfd){
     memset(data, 0, sizeof(data));
     // Demandez à l'utilisateur d'entrer un message
     char message[100];
+    printf("Merci d'envoyer votre calcul sous la forme 'calc,op1,op2' (ex: +,4,5)\n");
     printf("Votre calcule (max 100 caracteres): ");
     fgets(message, 1024, stdin);
     //strcpy(data, "calcule: ");
@@ -230,7 +236,7 @@ int envoie_operateur_numero(int socketfd){
 
     char value[100]="";
     char code_value[20];
-    sscanf(data, "{ \"code\" : %s , \"valeurs\" : [\" %s \"] }",code_value,value);
+    sscanf(data, "{ \"code\" : %s , \"valeurs\" : [\" %[^\t\n\"] \"] }",code_value,value);
    
     printf("Réponse du serveur: %s\n",value);
 
@@ -267,14 +273,28 @@ int main(int argc, char **argv) {
         exit(EXIT_FAILURE);
     }
 
-    // requêtes au serveur
+    // ----- DIFFERENTES REQUETES -----
+    // TODO : décommenter un seul appel à utiliser pour l'exécution
+    // --------------------------------
 
+    // envoi du nom du client au serveur
     // envoie_nom_de_client(socketfd);
-    // envoie_recois_message(socketfd);
-    //envoie_chaine_couleurs(socketfd);
-    //envoie_balises(socketfd);
-    //envoie_couleurs(socketfd, argv[1]);
-    envoie_operateur_numero(socketfd);
 
+    // envoi d'un message au serveur
+    // envoie_recois_message(socketfd);
+
+    // envoi d'un calcul
+    // envoie_operateur_numero(socketfd);
+    
+    // envoi d'une liste de couleurs au format rgb (#rrggbb)
+    // envoie_chaine_couleurs(socketfd);
+
+    // envoi d'une liste de balises
+    envoie_balises(socketfd);
+
+    // envoi d'une image /!\ NON TRAITE NE PAS UTILISER
+    // envoie_couleurs(socketfd, argv[1]);
+
+    //fin de la connexion
     close(socketfd);
 }

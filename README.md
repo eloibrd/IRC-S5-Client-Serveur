@@ -20,11 +20,13 @@ L'objectif du projet est de créer un environnement client serveur dans lequel l
 4. [x] Le client envoie N couleurs et le serveur les enregistre dans un fichier
 5. [x] Le client envoie N balises et le serveur les enregistre dans un fichier
 
+**_Rendu 1 :_** Le début de la **tâche 2** (JSON) a déjà été effectué mais le corps du message n'est pas séparé dans le champs valeurs (ex: on a valeurs:["+,6,8"] au lieu d'avoir valeurs:["+","6","8"]).
+
 #### Tâche 2 :
 
 **_Missions :_**
 
-1. [x] Messages au format JSON (Pour le moment le message est envoyé en une seule valeur)
+1. [x] Messages au format JSON (Pour le moment le message est envoyé en une seule valeur) - **_TODO_** séparer les valeurs
 
     - [x] messages
     - [x] nom

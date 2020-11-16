@@ -10,4 +10,6 @@
 2. Dans un nouveau terminal à la racine du projet, exécuter `./serveur`
 3. Dans un nouveau terminal à la racine du projet, exécuter `./client`
 
-    Optionnel : commenter et décommenter les différentes requêtes dans le main du client
+Commenter et décommenter les différentes requêtes dans le main du client pour réaliser les différentes opérations (client.c ligne 276).
+
+_Pour voir les enregistrements couleurs et balises lire respectivement les fichiers couleurs.txt et balises.txt à la racine du projet (à l'emplacement d'exécution du serveur)._
