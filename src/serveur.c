@@ -157,30 +157,33 @@ int recois_chaine_couleurs(int client_socket_fd, char *data) {
         nbcouleurs = atoi(couleurs);
         strcpy(couleurs, sep_at + 1);
     }
+    printf("%d couleurs : %s\n", nbcouleurs, couleurs);
     // recopier les couleurs
+    char couleurs_array[nbcouleurs][8];
     sep_at = strchr(couleurs, separator);
-    char echo1[] = "echo '";
-    char echo2[] = "' >> couleurs .txt";
-    char echo_msg[100];
-    while(sep_at != NULL){
-        *sep_at = '\0'; 
-        strcpy(echo_msg, echo1);
-        strcat(echo_msg, couleurs);
-        strcat(echo_msg, echo2);
-        system(echo_msg);
+    int cpt = 0;
+    while(sep_at != NULL && cpt < nbcouleurs){
+        *sep_at = '\0';
+        strcpy(couleurs_array[cpt], couleurs);
         strcpy(couleurs, sep_at + 1);
         sep_at = strchr(couleurs, separator);
-        memset(echo_msg,0,strlen(echo_msg));
+        cpt++;
     }
-    strcpy(echo_msg, echo1);
-    strcat(echo_msg, couleurs);
-    strcat(echo_msg, echo2);
-    system(echo_msg);
-
-    printf("%d couleurs : %s\n", nbcouleurs, couleurs);
+    strcpy(couleurs_array[nbcouleurs-1], couleurs);
+    
+    char echo1[] = "echo '";
+    char echo2[] = "' >> couleurs.txt";
+    char echo_msg[100];
+    for(int i = 0;i<nbcouleurs;i++){
+        strcpy(echo_msg, echo1);
+        strcat(echo_msg, couleurs_array[i]);
+        strcat(echo_msg, echo2);
+        system(echo_msg);  
+    }    
+    printf("Couleurs sauvegardées dans le fichier couleurs.txt");
 
     // réponse au client
-    char response[] = "couleurs reçues";
+    char response[] = "couleurs reçues et sauvegardées";
     int write_status = write(client_socket_fd, response, strlen(response));
     if ( write_status < 0 ) {
         perror("erreur ecriture");

@@ -3,3 +3,4 @@
 src/*.o
 client
 serveur
+couleurs.txt
