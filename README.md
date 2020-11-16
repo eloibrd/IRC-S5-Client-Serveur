@@ -14,7 +14,7 @@ L'objectif du projet est de créer un environnement client serveur dans lequel l
 
 **_Missions :_**
 
-1. [X] Le client envoie son nom puis le serveur renvoie son nom comme accusé de réception
+1. [x] Le client envoie son nom puis le serveur renvoie son nom comme accusé de réception
 2. [x] Le client envoie un message simple et le serveur renvoie une réponse
 3. [x] Le client envoie une opération en 3 requêtes et le serveur renvoie le résultat de l'opération
 4. [x] Le client envoie N couleurs et le serveur les enregistre dans un fichier
