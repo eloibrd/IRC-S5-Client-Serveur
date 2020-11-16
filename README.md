@@ -14,11 +14,25 @@ L'objectif du projet est de créer un environnement client serveur dans lequel l
 
 **_Missions :_**
 
-1. Le client envoie son nom puis le serveur renvoie son nom comme accusé de réception - **FAIT**
-2. Le client envoie un message simple et le serveur renvoie une réponse - **FAIT**
-3. Le client envoie une opération en 3 requêtes et le serveur renvoie le résultat de l'opération - **FAIT**
-4. Le client envoie N couleurs et le serveur les enregistre dans un fichier
-5. Le client envoie N balises et le serveur les enregistre dans un fichier
+1. [X] Le client envoie son nom puis le serveur renvoie son nom comme accusé de réception
+2. [x] Le client envoie un message simple et le serveur renvoie une réponse
+3. [x] Le client envoie une opération en 3 requêtes et le serveur renvoie le résultat de l'opération
+4. [x] Le client envoie N couleurs et le serveur les enregistre dans un fichier
+5. [x] Le client envoie N balises et le serveur les enregistre dans un fichier
+
+#### Tâche 2 :
+
+**_Missions :_**
+
+1. [x] Messages au format JSON (Pour le moment le message est envoyé en une seule valeur)
+
+    - [x] messages
+    - [x] nom
+    - [x] opérations
+    - [x] couleurs
+    - [x] balises
+
+2. [ ] Images BMP
 
 ### B. _Fichiers_
 
