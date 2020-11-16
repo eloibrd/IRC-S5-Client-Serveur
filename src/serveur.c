@@ -90,23 +90,19 @@ int  recois_numeros_calcule(int client_socket_fd, char *data){
     printf ("Message Calcule recu: %s\n", data);
     // char str[100];
     // sscanf(data, "%s", str);
-
+    char response[1024];
     int init_size = strlen(data);
-    char delim[] = ":";
+    char delim[] = ",";
 
     char *ptr = strtok(data, delim);
-    for (int i = 0; i < 1; i++)
-    {
-        ptr = strtok(NULL, delim);
-    }
+    
     printf("Calc'%s'\n", ptr);
 
-    char *operands = strtok(ptr, " ");
 
-    char *op1 = operands;
-    operands = strtok(NULL, " ");
+    char *op1 = ptr;
+    char *operands = strtok(NULL, delim);
     int op2 = atoi(operands);
-    operands = strtok(NULL, " ");
+    operands = strtok(NULL, delim);
     int op3 = atoi(operands);
 
     printf("op1:%s\n",op1);
@@ -125,13 +121,10 @@ int  recois_numeros_calcule(int client_socket_fd, char *data){
     }
     printf("result:%d",result);
     char value[500];
-    char* str2 = "Resultat: ";
     sprintf(value, "%d", result);
-    char answer[500];
-    strcat(answer,str2);
-    strcat(answer,value);
+    snprintf(response,sizeof(response),"{ \"code\" : \"calcule\", \"valeurs\" : [\"%s\"] }",value);
 
-    int data_size_write = write (client_socket_fd, (void *) answer, strlen(answer));
+    int data_size_write = write (client_socket_fd, (void *) response, strlen(response));
 
     if (data_size_write< 0) {
         perror("erreur lecture");
@@ -229,27 +222,27 @@ int recois_envoie_message(int socketfd) {
     * Les données envoyées par le client peuvent commencer par le mot "message :" ou un autre mot.
     */
 
-    char code_balise[10];
-    char code_lim[10];
-    char code_lim2[10];
+
+    char value[10];
     char code_value[10];
-    printf ("Message recu: %s\n", data);
-    sscanf(data, "%s %s %s %s", code_balise,code_lim,code_lim2,code_value);
+     printf ("Message recu: %s\n", data);
+    sscanf(data, "{ \"code\" : %s , \"valeurs\" : [\" %s \"] }",code_value,value);
     printf("Code value:%s \n",code_value);
+    printf("Value:%s \n",value);
     //Si le message commence par le mot: 'message:'
     if (strstr(code_value, "message") != NULL) {
         //printf ("Message recu aprés sscanf: %s\n", data);
         renvoie_message(client_socket_fd, data);
     }
-    else if (strcmp(code_value, "\"nom\"") == 0) {
+    else if (strstr(code_value, "nom") != NULL) {
         printf ("Client connecté : %s\n", data);
         renvoie_nom(client_socket_fd, data);
     }
-    else if (strcmp(code_value, "calcule:") == 0) {
+    else if (strstr(code_value, "calcule") != NULL) {
         printf ("Client connecté : %s\n", data);
-        recois_numeros_calcule(client_socket_fd, data);
+        recois_numeros_calcule(client_socket_fd, value);
     }
-    else if (strcmp(code_value, "couleurs:") == 0) {
+    else if (strstr(code_value, "couleurs:") == 0) {
         recois_chaine_couleurs(client_socket_fd, data);
     }
     else {
