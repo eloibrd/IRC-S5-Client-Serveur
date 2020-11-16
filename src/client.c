@@ -35,7 +35,7 @@ int envoie_recois_message(int socketfd) {
     //strcpy(data, "message: ");
     //strcat(data, message);
 
-    snprintf(data,sizeof(data),"{ \"code\" : \"message\", \"valeurs\" : [\"%s\"] }",message);
+    snprintf(data,sizeof(data),"{ \"code\" : \"message\" , \"valeurs\" : [\"%s\"] }",message);
 	printf("JSON SEND :%s \n",data);
     int write_status = write(socketfd, data, strlen(data));
     if ( write_status < 0 ) {
@@ -138,8 +138,10 @@ int envoie_nom_de_client(int socketfd){
     char message[100];
     printf("Votre nom (max 100 caracteres): ");
     fgets(message, 1024, stdin);
-    strcpy(data, "nom: ");
-    strcat(data, message);
+    //strcpy(data, "nom: ");
+    //strcat(data, message);
+    snprintf(data,sizeof(data),"{ \"code\" : \"nom\" , \"valeurs\" : [\"%s\"] }",message);
+	printf("JSON SEND :%s \n",data);
 
     int write_status = write(socketfd, data, strlen(data));
     if ( write_status < 0 ) {
@@ -166,9 +168,10 @@ int envoie_operateur_numero(int socketfd){
     char message[100];
     printf("Votre calcule (max 100 caracteres): ");
     fgets(message, 1024, stdin);
-    strcpy(data, "calcule: ");
-    strcat(data, message);
-
+    //strcpy(data, "calcule: ");
+    //strcat(data, message);
+    snprintf(data,sizeof(data),"{ \"code\" : \"calcule\" , \"valeurs\" : [\"%s\"] }",message);
+    printf("JSON SEND :%s \n",data);
     int write_status = write(socketfd, data, strlen(data));
     if ( write_status < 0 ) {
         perror("erreur ecriture");
@@ -220,9 +223,9 @@ int main(int argc, char **argv) {
 
     //envoie_nom_de_client(socketfd);
     //envoie_recois_message(socketfd);
-    envoie_chaine_couleurs(socketfd);
+    //envoie_chaine_couleurs(socketfd);
     //envoie_couleurs(socketfd, argv[1]);
-    //envoie_operateur_numero(socketfd);
+    envoie_operateur_numero(socketfd);
 
     close(socketfd);
 }
