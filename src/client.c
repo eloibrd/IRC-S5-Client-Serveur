@@ -219,8 +219,8 @@ int main(int argc, char **argv) {
     // requêtes au serveur
 
     //envoie_nom_de_client(socketfd);
-    envoie_recois_message(socketfd);
-    //envoie_chaine_couleurs(socketfd);
+    // envoie_recois_message(socketfd);
+    envoie_chaine_couleurs(socketfd);
     //envoie_couleurs(socketfd, argv[1]);
     //envoie_operateur_numero(socketfd);
 

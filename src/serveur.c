@@ -164,6 +164,25 @@ int recois_chaine_couleurs(int client_socket_fd, char *data) {
         nbcouleurs = atoi(couleurs);
         strcpy(couleurs, sep_at + 1);
     }
+    // recopier les couleurs
+    sep_at = strchr(couleurs, separator);
+    char echo1[] = "echo '";
+    char echo2[] = "' >> couleurs .txt";
+    char echo_msg[100];
+    while(sep_at != NULL){
+        *sep_at = '\0'; 
+        strcpy(echo_msg, echo1);
+        strcat(echo_msg, couleurs);
+        strcat(echo_msg, echo2);
+        system(echo_msg);
+        strcpy(couleurs, sep_at + 1);
+        sep_at = strchr(couleurs, separator);
+        memset(echo_msg,0,strlen(echo_msg));
+    }
+    strcpy(echo_msg, echo1);
+    strcat(echo_msg, couleurs);
+    strcat(echo_msg, echo2);
+    system(echo_msg);
 
     printf("%d couleurs : %s\n", nbcouleurs, couleurs);
 
