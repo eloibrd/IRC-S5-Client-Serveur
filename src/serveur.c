@@ -64,7 +64,7 @@ int renvoie_message(int client_socket_fd, char *data) {
     fgets(message, 1024, stdin);
     //strcpy(response, "message: ");
     //strcat(response, message);
-    snprintf(response,sizeof(response),"{ \"code\" : \"message\", \"valeurs\" : [\"%s\"] }",message);
+    snprintf(response,sizeof(response),"{ \"code\" : \"message\" , \"valeurs\" : [\"%s\"] }",message);
     printf("JSON SEND :%s \n",response);
 
     int write_status = write(client_socket_fd, response, strlen(response));
@@ -136,22 +136,13 @@ int recois_chaine_couleurs(int client_socket_fd, char *data) {
     char couleurs[1024];
     // la réinitialisation de l'ensemble des données
     memset(couleurs, 0, sizeof(couleurs));
-    // split la string pour enlever le code
-    char separator = ':';
-    char * sep_at = strchr(data, separator);
-    if(sep_at != NULL)
-    {
-        *sep_at = '\0'; // cut la chaine au séparateur
-        // prendre en compte l'espace après les ':' du code
-        strcpy(couleurs, sep_at +2);
-    }
-    printf("chaine couleurs : %s",couleurs);
+    strcpy(couleurs, data);
 
     // analyse chaine couleur
     // parse la string pour savoir combien de couleurs ont étés recues
-    separator = ',';
+    char separator = ',';
     int nbcouleurs = -1;
-    sep_at = strchr(couleurs, separator);
+    char * sep_at = strchr(couleurs, separator);
     if(sep_at != NULL){
         *sep_at = '\0'; 
         nbcouleurs = atoi(couleurs);
@@ -171,6 +162,7 @@ int recois_chaine_couleurs(int client_socket_fd, char *data) {
     }
     strcpy(couleurs_array[nbcouleurs-1], couleurs);
     
+    system("echo '-- Nouvelle entrée --' >> couleurs.txt");
     char echo1[] = "echo '";
     char echo2[] = "' >> couleurs.txt";
     char echo_msg[100];
@@ -180,10 +172,61 @@ int recois_chaine_couleurs(int client_socket_fd, char *data) {
         strcat(echo_msg, echo2);
         system(echo_msg);  
     }    
-    printf("Couleurs sauvegardées dans le fichier couleurs.txt");
+    printf("Couleurs sauvegardées dans le fichier couleurs.txt\n");
 
     // réponse au client
     char response[] = "couleurs reçues et sauvegardées";
+    int write_status = write(client_socket_fd, response, strlen(response));
+    if ( write_status < 0 ) {
+        perror("erreur ecriture");
+        exit(EXIT_FAILURE);
+    }
+}
+
+int recois_balises(int client_socket_fd, char *data) {    
+    char balises[1024];
+    // la réinitialisation de l'ensemble des données
+    memset(balises, 0, sizeof(balises));
+    strcpy(balises,data);
+
+    // analyse chaine couleur
+    // parse la string pour savoir combien de couleurs ont étés recues
+    char separator = ',';
+    int nbbalises = -1;
+    char * sep_at = strchr(balises, separator);
+    if(sep_at != NULL){
+        *sep_at = '\0'; 
+        nbbalises = atoi(balises);
+        strcpy(balises, sep_at + 1);
+    }
+    printf("%d balises : %s\n", nbbalises, balises);
+    // recopier les couleurs
+    char balises_array[nbbalises][100];
+    sep_at = strchr(balises, separator);
+    int cpt = 0;
+    while(sep_at != NULL && cpt < nbbalises){
+        *sep_at = '\0';
+        strcpy(balises_array[cpt], balises);
+        strcpy(balises, sep_at + 1);
+        sep_at = strchr(balises, separator);
+        cpt++;
+    }
+    strcpy(balises_array[nbbalises-1], balises);
+    
+    system("echo '-- Nouvelle entrée --' >> balises.txt");
+    char echo1[] = "echo '";
+    char echo2[] = "' >> balises.txt";
+    char echo_msg[100];
+    for(int i = 0;i<nbbalises;i++){
+        strcpy(echo_msg, echo1);
+        strcat(echo_msg, balises_array[i]);
+        strcat(echo_msg, echo2);
+        system(echo_msg);  
+    }    
+    printf("Balises sauvegardées dans le fichier balises.txt\n");
+
+    // réponse au client
+    char response[] = "balises reçues et sauvegardées";
     int write_status = write(client_socket_fd, response, strlen(response));
     if ( write_status < 0 ) {
         perror("erreur ecriture");
@@ -226,9 +269,9 @@ int recois_envoie_message(int socketfd) {
     */
 
 
-    char value[10];
-    char code_value[10];
-     printf ("Message recu: %s\n", data);
+    char value[100];
+    char code_value[20];
+    printf ("Message recu: %s\n", data);
     sscanf(data, "{ \"code\" : %s , \"valeurs\" : [\" %s \"] }",code_value,value);
     printf("Code value:%s \n",code_value);
     printf("Value:%s \n",value);
@@ -245,8 +288,11 @@ int recois_envoie_message(int socketfd) {
         printf ("Client connecté : %s\n", data);
         recois_numeros_calcule(client_socket_fd, value);
     }
-    else if (strstr(code_value, "couleurs:") == 0) {
-        recois_chaine_couleurs(client_socket_fd, data);
+    else if (strstr(code_value, "couleurs") != NULL) {
+        recois_chaine_couleurs(client_socket_fd, value);
+    }
+    else if (strstr(code_value, "balises") != NULL) {
+        recois_balises(client_socket_fd, value);
     }
     else {
         plot(data);

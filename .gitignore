@@ -3,4 +3,6 @@
 src/*.o
 client
 serveur
+## ignore les fichiers de sauvegarde de données
 couleurs.txt
+balises.txt
