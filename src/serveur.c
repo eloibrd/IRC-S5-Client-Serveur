@@ -15,6 +15,7 @@
 #include <unistd.h>
 
 #include "serveur.h"
+#include "shared.h"
 
 
 void plot(char *data) {
@@ -63,9 +64,12 @@ int renvoie_message(int client_socket_fd, char *data) {
     char message[100];
     printf("Votre réponse au client (max 1000 caracteres): ");
     fgets(message, 1024, stdin);
-    //strcpy(response, "message: ");
-    //strcat(response, message);
-    snprintf(response,sizeof(response),"{ \"code\" : \"message\" , \"valeurs\" : [\"%s\"] }",message);
+    removeChar(message,'\n');
+    Json_object MSG;
+    strcpy(MSG.code,"message");
+    strcpy(MSG.valeur,message);    
+    JSONToString(response,&MSG);
+    // snprintf(response,sizeof(response),"{ \"code\" : \"message\" , \"valeurs\" : [\"%s\"] }",message);
     printf("Envoi de la reponse au client ...\n");
 
     int write_status = write(client_socket_fd, response, strlen(response));
@@ -77,11 +81,16 @@ int renvoie_message(int client_socket_fd, char *data) {
 
 int renvoie_nom(int client_socket_fd, char *data) {
     printf("Client connecté : %s\n", data);
-
+    char message[100]="";
+    strcpy(message,data);
     char response[1024];
     memset(response, 0, sizeof(response));
-    snprintf(response,sizeof(response),"{ \"code\" : \"nom\" , \"valeurs\" : [\"%s\"] }",data);
-    
+    // snprintf(response,sizeof(response),"{ \"code\" : \"nom\" , \"valeurs\" : [\"%s\"] }",data);
+    removeChar(message,'\n');
+    Json_object MSG;
+    strcpy(MSG.code,"nom");
+    strcpy(MSG.valeur,message);    
+    JSONToString(response,&MSG);
     int write_data = write (client_socket_fd, response, strlen(response));
 
     if (write_data < 0) {
@@ -100,7 +109,7 @@ int  recois_numeros_calcule(int client_socket_fd, char *data){
 
     char *ptr = strtok(data, delim);
     
-    printf("Calc '%s'\n", ptr);
+    printf("Calcul '%s'\n", ptr);
 
 
     char *op1 = ptr;
@@ -109,9 +118,7 @@ int  recois_numeros_calcule(int client_socket_fd, char *data){
     operands = strtok(NULL, delim);
     int op3 = atoi(operands);
 
-    printf("operateur 1 : %s\n",op1);
-    printf("operateur 2 : %d\n",op2);
-    printf("operateur 3 : %d\n",op3);
+    printf("operation: %d %s %d\n",op2,op1,op3);
 
     int result;
     if(strcmp("+",op1)==0){
@@ -123,10 +130,15 @@ int  recois_numeros_calcule(int client_socket_fd, char *data){
     }else if(strcmp("/",op1)==0){
         result= op2 / op3;
     }
-    printf("result:%d\n",result);
+    printf("resultat: %d\n",result);
     char value[100];
     sprintf(value, "%d", result);
-    snprintf(response,sizeof(response),"{ \"code\" : \"calcule\" , \"valeurs\" : [\"%s\"] }",value);
+
+    Json_object MSG;
+    strcpy(MSG.code,"calcule");
+    strcpy(MSG.valeur,value);    
+    JSONToString(response,&MSG);
+    // snprintf(response,sizeof(response),"{ \"code\" : \"calcule\" , \"valeurs\" : [\"%s\"] }",value);
     printf("Envoi du resultat au client ...\n");
     int data_size_write = write (client_socket_fd, (void *) response, strlen(response));
 
@@ -181,7 +193,11 @@ int recois_chaine_couleurs(int client_socket_fd, char *data) {
     // réponse au client
     char response[1024];
     char value[] = "couleurs reçues et sauvegardées";
-    snprintf(response,sizeof(response),"{ \"code\" : \"couleurs\" , \"valeurs\" : [\"%s\"] }",value);
+    Json_object MSG;
+    strcpy(MSG.code,"couleurs");
+    strcpy(MSG.valeur,value);    
+    JSONToString(response,&MSG);
+    // snprintf(response,sizeof(response),"{ \"code\" : \"couleurs\" , \"valeurs\" : [\"%s\"] }",value);
     int write_status = write(client_socket_fd, response, strlen(response));
     if ( write_status < 0 ) {
         perror("erreur ecriture");
@@ -233,8 +249,12 @@ int recois_balises(int client_socket_fd, char *data) {
 
     // réponse au client
     char response[1024];
-    char value[100] = "balises reçues et sauvegardées\n";
-    snprintf(response,sizeof(response),"{ \"code\" : \"balises\" , \"valeurs\" : [\"%s\"] }",value);
+    char value[100] = "balises reçues et sauvegardées";
+    Json_object MSG;
+    strcpy(MSG.code,"balises");
+    strcpy(MSG.valeur,value);    
+    JSONToString(response,&MSG);
+    // snprintf(response,sizeof(response),"{ \"code\" : \"balises\" , \"valeurs\" : [\"%s\"] }",value);
     int write_status = write(client_socket_fd, response, strlen(response));
     if ( write_status < 0 ) {
         perror("erreur ecriture");
@@ -275,28 +295,31 @@ int recois_envoie_message(int socketfd) {
     * extraire le code des données envoyées par le client.
     * Les données envoyées par le client peuvent commencer par le mot "message :" ou un autre mot.
     */
-    char value[100];
-    char code_value[20];
-    printf ("Message recu, analyse ...\n");
-    sscanf(data, "{ \"code\" : %s , \"valeurs\" : [\" %s \"] }",code_value,value);
-    printf("Code value:%s \n",code_value);
-    printf("Value:%s \n",value);
+    // char value[100];
+    // char code_value[20];
+    Json_object JSON_message;
+    StringToJSON(data,&JSON_message);
+
+    printf ("Message recu : %s \nanalyse ...\n",data);
+    // sscanf(data, "{ \"code\" : %s , \"valeurs\" : [\" %s \"] }",code_value,value);
+    printf("Code recu:%s \n",JSON_message.code);
+    printf("Valeurs:%s \n",JSON_message.valeur);
     printf("Traitement ... \n\n");
 
-    if (strstr(code_value, "message") != NULL) {
-        renvoie_message(client_socket_fd, value);
+    if (strstr(JSON_message.code, "message") != NULL) {
+        renvoie_message(client_socket_fd, JSON_message.valeur);
     }
-    else if (strstr(code_value, "nom") != NULL) {
-        renvoie_nom(client_socket_fd, value);
+    else if (strstr(JSON_message.code, "nom") != NULL) {
+        renvoie_nom(client_socket_fd, JSON_message.valeur);
     }
-    else if (strstr(code_value, "calcule") != NULL) {
-        recois_numeros_calcule(client_socket_fd, value);
+    else if (strstr(JSON_message.code, "calcule") != NULL) {
+        recois_numeros_calcule(client_socket_fd, JSON_message.valeur);
     }
-    else if (strstr(code_value, "couleurs") != NULL) {
-        recois_chaine_couleurs(client_socket_fd, value);
+    else if (strstr(JSON_message.code, "couleurs") != NULL) {
+        recois_chaine_couleurs(client_socket_fd, JSON_message.valeur);
     }
-    else if (strstr(code_value, "balises") != NULL) {
-        recois_balises(client_socket_fd, value);
+    else if (strstr(JSON_message.code, "balises") != NULL) {
+        recois_balises(client_socket_fd, JSON_message.valeur);
     }
     else {
         plot(data);
