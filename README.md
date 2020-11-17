@@ -26,7 +26,7 @@ L'objectif du projet est de créer un environnement client serveur dans lequel l
 
 **_Missions :_**
 
--   [x] Messages au format JSON (Pour le moment le message est envoyé en une seule valeur) - **_TODO_** séparer les valeurs
+-   [x] Messages au format JSON
 
     -   [x] messages
     -   [x] nom
