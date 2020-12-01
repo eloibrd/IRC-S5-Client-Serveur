@@ -39,7 +39,7 @@ int JSONformat(char * s){
 int JSONValidator(char * json_string){
     int err;
     regex_t compiled_reg;
-    char * regex= "[{]{1}[\s]*\".*\"[\s]*:[\s]*\".*\"[\s]*,[\s]*\".*\"[\s]*:[\s]*\[(\".*\"|,([0-9]*))*\][\s]*[}]{1}";
+    char * regex= "[{]{1}[\s]*\".*\"[\s]*:[\s]*\".*\"[\s]*,[\s]*\".*\"[\s]*:[\s]*\[(\".*\"|,[0-9]*)*\][\s]*[}]{1}";
 
     err = regcomp(&compiled_reg,regex,REG_EXTENDED|REG_NOSUB|REG_ICASE);
     if (err == 0){
