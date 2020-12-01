@@ -302,10 +302,10 @@ int main(int argc, char **argv) {
     // envoie_nom_de_client(socketfd);
 
     // envoi d'un message au serveur
-    // envoie_recois_message(socketfd);
+    envoie_recois_message(socketfd);
 
     // envoi d'un calcul
-    envoie_operateur_numero(socketfd);
+    // envoie_operateur_numero(socketfd);
     
     // envoi d'une liste de couleurs au format rgb (#rrggbb)
     // envoie_chaine_couleurs(socketfd);

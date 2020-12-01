@@ -18,6 +18,51 @@
 #include "shared.h"
 #include "validateur.h"
 
+void tri_a_bulle(int *tableau, int const size) 
+{
+	int ordered = 1;
+
+	for (int i = 0; i < size && ordered; ++i)
+	{
+		ordered = 0;
+		for (int j = 1; j < size - i; ++j)
+		{
+			if (tableau[j-1] > tableau[j])
+			{
+				int swap = tableau[j-1];
+				tableau[j-1] = tableau[j];
+				tableau[j] = swap;
+				ordered = 1;
+ 			}
+		}
+	}
+}
+
+float moyenne(int *tableau, int const size) 
+{
+    
+}
+
+int maximum(int *tableau, int const size) 
+{
+    
+}
+
+int minimum(int *tableau, int const size) 
+{
+	
+}
+
+float ecart_type(int *tableau, int const size) 
+{
+	
+}
+
+void complexe_operation(char * data){
+    //parsing datas
+
+
+}
 
 void plot(char *data) {
 
@@ -112,7 +157,6 @@ int  recois_numeros_calcule(int client_socket_fd, char *data){
     
     printf("Calcul '%s'\n", ptr);
 
-
     char *op1 = ptr;
     char *operands = strtok(NULL, delim);
     int op2 = atoi(operands);
@@ -130,6 +174,8 @@ int  recois_numeros_calcule(int client_socket_fd, char *data){
         result= op2 * op3;
     }else if(strcmp("/",op1)==0){
         result= op2 / op3;
+    }else{
+        complexe_operation(data);
     }
     printf("resultat: %d\n",result);
     char value[100];
