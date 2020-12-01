@@ -57,3 +57,4 @@ L'objectif du projet est de créer un environnement client serveur dans lequel l
 ### E. _Difficulté_
 
 ### F. _Commentaires_
+char * regex= "{\nt{0,}\".*\"\nt{0,}:\nt{0,}\".*\"\nt{0,},\nt{0,}\".*\"\nt{0,}:\nt{0,}[(\".*\"|[0-9]*)]*\nt{0,}}";
