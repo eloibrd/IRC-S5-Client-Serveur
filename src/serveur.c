@@ -16,7 +16,6 @@
 
 #include "serveur.h"
 #include "shared.h"
-#include "validateur.h"
 
 void tri_a_bulle(int *tableau, int const size) 
 {
@@ -202,7 +201,8 @@ int  recois_numeros_calcule(int client_socket_fd, char *data){
     }else if(strcmp("/",op1)==0){
         result= op2 / op3;
     }else{
-        complexe_operation(data);
+        // TODO Tache 4 here
+      //  complexe_operation(data);
     }
     printf("resultat: %d\n",result);
     char value[100];
@@ -364,13 +364,13 @@ int recois_envoie_message(int socketfd) {
         perror("erreur lecture");
         return(EXIT_FAILURE);
     }
-
-    /*
-    * extraire le code des données envoyées par le client.
-    * Les données envoyées par le client peuvent commencer par le mot "message :" ou un autre mot.
-    */
-    // char value[100];
-    // char code_value[20];
+    // validation du JSON
+    int notValid = JSONValidator(data);
+    if(notValid){
+        printf("Le message reçu n'a pas une syntaxe valide... \n");
+    }else{
+        printf("Le message reçu a une syntaxe valide... \n");
+    }
     Json_object JSON_message;
     StringToJSON(data,&JSON_message);
 
