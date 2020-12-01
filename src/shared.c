@@ -35,6 +35,31 @@ int JSONformat(char * s){
     return 1;
 }
 
+int JSONValidator(char * json_string){
+    int err;
+    regex_t compiled_reg;
+    char * regex= "{[:space:]*\".*\"[:space:]*:[:space:]*\".*\"[:space:]*,[:space:]*\".*\"[:space:]*:[:space:]*[(\".*\"|[0-9]*)*][:space:]*}";
+    
+    err = regcomp(&compiled_reg,regex,REG_NOSUB | REG_EXTENDED);
+    if (err == 0){
+    	int match;
+    	
+    	match = regexec(&compiled_reg,json_string,0,NULL,0);
+    	regfree(&compiled_reg);
+    	
+    	if(match==0){
+    		printf("Votre chaine JSON est valide");
+    		return (EXIT_SUCCESS);
+    	}else if(match== REG_NOMATCH){
+    		printf("Votre chaine JSON n'est pas valide\n");
+    		return (EXIT_FAILURE);
+    	}
+    }else{
+    	printf("Regex malformée \n");
+    	return (EXIT_FAILURE);
+    }
+}
+
 int StringToJSON(char * json_string, Json_object * json_obj){
     char value[100]="";
     char code_value[30]="";
