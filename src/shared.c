@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <regex.h>
 
 #include "shared.h"
 
@@ -35,9 +36,135 @@ int JSONformat(char * s){
     return 1;
 }
 
+int JSONValidator(char * json_string){
+    int err;
+    regex_t compiled_reg;
+    char * regex= "[{]{1}[\s]*\".*\"[\s]*:[\s]*\".*\"[\s]*,[\s]*\".*\"[\s]*:[\s]*\[(\".*\"|,[0-9]*)*\][\s]*[}]{1}";
+
+    err = regcomp(&compiled_reg,regex,REG_EXTENDED|REG_NOSUB|REG_ICASE);
+    if (err == 0){
+    	int match;
+    	
+    	match = regexec(&compiled_reg,json_string,0,NULL,0);
+    	regfree(&compiled_reg);
+    	
+    	if(match==0){
+    		printf("Votre chaine JSON est valide\n");
+    		return (EXIT_SUCCESS);
+    	}else if(match== REG_NOMATCH){
+    		printf("Votre chaine JSON n'est pas valide\n");
+    		return (EXIT_FAILURE);
+    	}
+    }else{
+    	printf("Regex malformée \n");
+    	return (EXIT_FAILURE);
+    }
+}
+
+int messageValidator(char * json_string){
+	int err;
+    regex_t compiled_reg;
+    char * regex= "[{]{1}[\s]*\"code\"[\s]*:[\s]*\"message\"[\s]*,[\s]*\"valeurs\"[\s]*:[\s]*\[\".*\"\][\s]*[}]{1}";
+
+    err = regcomp(&compiled_reg,regex,REG_EXTENDED|REG_NOSUB|REG_ICASE);
+    if (err == 0){
+    	int match;
+    	match = regexec(&compiled_reg,json_string,0,NULL,0);
+    	regfree(&compiled_reg);
+    	
+    	if(match==0){
+    		printf("Votre message est valide\n");
+    		return (EXIT_SUCCESS);
+    	}else if(match== REG_NOMATCH){
+    		printf("Votre message n'est pas valide\n");
+    		return (EXIT_FAILURE);
+    	}
+    }else{
+    	printf("Regex malformée \n");
+    	return (EXIT_FAILURE);
+    }
+
+}
+
+int nomValidator(char * json_string){
+	int err;
+    regex_t compiled_reg;
+    char * regex= "[{]{1}[\s]*\"code\"[\s]*:[\s]*\"nom\"[\s]*,[\s]*\"valeurs\"[\s]*:[\s]*\[\".*\"\][\s]*[}]{1}";
+
+    err = regcomp(&compiled_reg,regex,REG_EXTENDED|REG_NOSUB|REG_ICASE);
+    if (err == 0){
+    	int match;
+    	match = regexec(&compiled_reg,json_string,0,NULL,0);
+    	regfree(&compiled_reg);
+    	
+    	if(match==0){
+    		printf("Votre nom est valide\n");
+    		return (EXIT_SUCCESS);
+    	}else if(match== REG_NOMATCH){
+    		printf("Votre nom n'est pas valide\n");
+    		return (EXIT_FAILURE);
+    	}
+    }else{
+    	printf("Regex malformée \n");
+    	return (EXIT_FAILURE);
+    }
+
+}
+
+int calculValidator(char * json_string){
+	int err;
+    regex_t compiled_reg;
+    char * regex= "[{]{1}[\s]*\"code\"[\s]*:[\s]*\"calcul\"[\s]*,[\s]*\"valeurs\"[\s]*:[\s]*\[\"[+-\*/]\",[0-9]*,[0-9]*\][\s]*[}]{1}";
+
+    err = regcomp(&compiled_reg,regex,REG_EXTENDED|REG_NOSUB|REG_ICASE);
+    if (err == 0){
+    	int match;
+    	match = regexec(&compiled_reg,json_string,0,NULL,0);
+    	regfree(&compiled_reg);
+    	
+    	if(match==0){
+    		printf("Votre nom est valide\n");
+    		return (EXIT_SUCCESS);
+    	}else if(match== REG_NOMATCH){
+    		printf("Votre nom n'est pas valide\n");
+    		return (EXIT_FAILURE);
+    	}
+    }else{
+    	printf("Regex malformée \n");
+    	return (EXIT_FAILURE);
+    }
+
+}
+
+int baliseValidator(char * json_string){
+	int err;
+    regex_t compiled_reg;
+    char * regex= "[{]{1}[\s]*\"code\"[\s]*:[\s]*\"balises\"[\s]*,[\s]*\"valeurs\"[\s]*:[\s]*\[[0-9]*(,\".*\")\][\s]*[}]{1}";
+
+    err = regcomp(&compiled_reg,regex,REG_EXTENDED|REG_NOSUB|REG_ICASE);
+    if (err == 0){
+    	int match;
+    	match = regexec(&compiled_reg,json_string,0,NULL,0);
+    	regfree(&compiled_reg);
+    	
+    	if(match==0){
+    		printf("Votre nom est valide\n");
+    		return (EXIT_SUCCESS);
+    	}else if(match== REG_NOMATCH){
+    		printf("Votre nom n'est pas valide\n");
+    		return (EXIT_FAILURE);
+    	}
+    }else{
+    	printf("Regex malformée \n");
+    	return (EXIT_FAILURE);
+    }
+
+}
+
 int StringToJSON(char * json_string, Json_object * json_obj){
     char value[100]="";
     char code_value[30]="";
+    JSONValidator(json_string);
     sscanf(json_string, "{ \"code\" : %s , \"valeurs\" : [%[^]]] }",code_value,value);
     strcpy((*json_obj).code,code_value);
     removeChar(value,'"');

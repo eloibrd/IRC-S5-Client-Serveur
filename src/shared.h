@@ -11,5 +11,6 @@ int removeChar(char * s, char c);
 int JSONformat(char * s);
 int StringToJSON(char * json_string, Json_object * json_obj);
 int JSONToString(char * json_string, Json_object * json_obj);
+int JSONValidator(char * json_string);
 
 #endif
