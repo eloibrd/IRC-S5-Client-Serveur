@@ -60,7 +60,34 @@ float ecart_type(int *tableau, int const size)
 
 void complexe_operation(char * data){
     //parsing datas
+    char operateurs[1024];
+    // la réinitialisation de l'ensemble des données
+    memset(operateurs, 0, sizeof(operateurs));
+    strcpy(operateurs,data);
 
+    // analyse chaine couleur
+    // parse la string pour savoir combien de couleurs ont étés recues
+    char separator = ',';
+    int operation = -1;
+    char * sep_at = strchr(operateurs, separator);
+    if(sep_at != NULL){
+        *sep_at = '\0'; 
+        operation = atoi(operateurs);
+        strcpy(operateurs, sep_at + 1);
+    }
+    printf("opération : %d, nombres : %s\n", operation, operateurs);
+    // recopier les balises
+    char operateurs_array[100];
+    sep_at = strchr(operateurs, separator);
+    int cpt = 0;
+    while(sep_at != NULL){
+        *sep_at = '\0';
+        operateurs_array[cpt]= atoi(operateurs);
+        strcpy(operateurs, sep_at + 1);
+        sep_at = strchr(operateurs, separator);
+        cpt++;
+    }
+    operateurs_array[cpt]= atoi(operateurs);
 
 }
 
@@ -269,7 +296,7 @@ int recois_balises(int client_socket_fd, char *data) {
         strcpy(balises, sep_at + 1);
     }
     printf("%d balises : %s\n", nbbalises, balises);
-    // recopier les couleurs
+    // recopier les balises
     char balises_array[nbbalises][100];
     sep_at = strchr(balises, separator);
     int cpt = 0;
