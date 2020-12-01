@@ -16,6 +16,7 @@
 
 #include "serveur.h"
 #include "shared.h"
+#include "validateur.h"
 
 
 void plot(char *data) {

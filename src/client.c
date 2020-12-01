@@ -16,6 +16,7 @@
 #include "client.h"
 #include "bmp.h"
 #include "shared.h"
+#include "validateur.h"
 
 /*
  * Fonction d'envoi et de réception de messages
