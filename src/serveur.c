@@ -39,44 +39,49 @@ void tri_a_bulle(int *tableau, int const size)
 
 float moyenne(int *tableau, int const size) 
 {
-    
+    int value = 0;
+    for(int i=0; i < size; i++){
+        value += tableau[i];
+    }
+    return value / size;
 }
 
-int maximum(int *tableau, int const size) 
+float maximum(int *tableau, int const size) 
 {
-    
+    return (float)tableau[size-1];
 }
 
-int minimum(int *tableau, int const size) 
+float minimum(int *tableau) 
 {
-	
+	return (float)tableau[0];
 }
 
 float ecart_type(int *tableau, int const size) 
 {
-	
+	// calcul d'écart-type
 }
 
-void complexe_operation(char * data){
+float complexe_operation(char * data){
+    printf("%s",data);
     //parsing datas
     char operateurs[1024];
     // la réinitialisation de l'ensemble des données
     memset(operateurs, 0, sizeof(operateurs));
     strcpy(operateurs,data);
 
-    // analyse chaine couleur
-    // parse la string pour savoir combien de couleurs ont étés recues
+    // parse la string pour savoir quelle opération complexe est demandée
     char separator = ',';
-    int operation = -1;
+    char operation[30];
+    memset(operation, 0, sizeof(operation));
     char * sep_at = strchr(operateurs, separator);
     if(sep_at != NULL){
         *sep_at = '\0'; 
-        operation = atoi(operateurs);
+        printf("operation demandee : %s", operateurs);
+        strcpy(operation, operateurs);
         strcpy(operateurs, sep_at + 1);
     }
-    printf("opération : %d, nombres : %s\n", operation, operateurs);
-    // recopier les balises
-    char operateurs_array[100];
+    printf("opération : %s, nombres : %s\n", operation, operateurs);
+    int operateurs_array[100];
     sep_at = strchr(operateurs, separator);
     int cpt = 0;
     while(sep_at != NULL){
@@ -87,7 +92,20 @@ void complexe_operation(char * data){
         cpt++;
     }
     operateurs_array[cpt]= atoi(operateurs);
+    int size = cpt + 1;
+    tri_a_bulle(operateurs_array, size);
 
+    // tableau récupéré et converti en int
+    if(strcmp("moyenne",operation)==0){
+        return moyenne(operateurs_array, size);
+    }else if(strcmp("minimum",operation)==0){
+        return minimum(operateurs_array);
+    }else if(strcmp("maximum",operation)==0){
+        return maximum(operateurs_array, size);
+    }else if(strcmp("ecart-type",operation)==0){
+        return ecart_type(operateurs_array, size);
+    }
+    return EXIT_FAILURE;
 }
 
 void plot(char *data) {
@@ -149,6 +167,7 @@ int renvoie_message(int client_socket_fd, char *data) {
         perror("erreur ecriture");
         exit(EXIT_FAILURE);
     }
+    return EXIT_SUCCESS;
 }
 
 int renvoie_nom(int client_socket_fd, char *data) {
@@ -169,6 +188,7 @@ int renvoie_nom(int client_socket_fd, char *data) {
         perror("erreur ecriture");
         return(EXIT_FAILURE);
     }
+    return EXIT_SUCCESS;
 }
 
 int  recois_numeros_calcule(int client_socket_fd, char *data){
@@ -176,10 +196,14 @@ int  recois_numeros_calcule(int client_socket_fd, char *data){
     *Récéption d'un message de type calcule
     */
     char response[1024];
-    int init_size = strlen(data);
+    // int init_size = strlen(data);
     char delim[] = ",";
 
-    char *ptr = strtok(data, delim);
+    // duplication des data pour modification
+    char message[1024]="";
+    strcpy(message,data);
+
+    char *ptr = strtok(message, delim);
     
     printf("Calcul '%s'\n", ptr);
 
@@ -189,24 +213,25 @@ int  recois_numeros_calcule(int client_socket_fd, char *data){
     operands = strtok(NULL, delim);
     int op3 = atoi(operands);
 
-    printf("operation: %d %s %d\n",op2,op1,op3);
-
-    int result;
+    float result;
     if(strcmp("+",op1)==0){
-        result= op2 + op3;
+        printf("operation: %d %s %d\n",op2,op1,op3);
+        result= (float)(op2 + op3);
     }else if(strcmp("-",op1)==0){
-        result= op2 - op3;
+        printf("operation: %d %s %d\n",op2,op1,op3);
+        result= (float)(op2 - op3);
     }else if(strcmp("*",op1)==0){
-        result= op2 * op3;
+        printf("operation: %d %s %d\n",op2,op1,op3);
+        result= (float)(op2 * op3);
     }else if(strcmp("/",op1)==0){
-        result= op2 / op3;
-    }else{
-        // TODO Tache 4 here
-      //  complexe_operation(data);
+        printf("operation: %d %s %d\n",op2,op1,op3);
+        result= (float)(op2 / op3);
+    }else if(strcmp("moyenne",op1)==0 || strcmp("minimum",op1)==0 || strcmp("maximum",op1)==0 || strcmp("ecart-type",op1)==0){
+        result = complexe_operation(data);
     }
-    printf("resultat: %d\n",result);
+    printf("resultat: %f\n",result);
     char value[100];
-    sprintf(value, "%d", result);
+    sprintf(value, "%.2f", result);
 
     Json_object MSG;
     strcpy(MSG.code,"calcule");
@@ -220,6 +245,7 @@ int  recois_numeros_calcule(int client_socket_fd, char *data){
         perror("erreur lecture");
         return(EXIT_FAILURE);
     }
+    return EXIT_SUCCESS;
 }
 
 int recois_chaine_couleurs(int client_socket_fd, char *data) {    
@@ -277,6 +303,7 @@ int recois_chaine_couleurs(int client_socket_fd, char *data) {
         perror("erreur ecriture");
         exit(EXIT_FAILURE);
     }
+    return EXIT_SUCCESS;
 }
 
 int recois_balises(int client_socket_fd, char *data) {    
@@ -334,6 +361,7 @@ int recois_balises(int client_socket_fd, char *data) {
         perror("erreur ecriture");
         exit(EXIT_FAILURE);
     }
+    return EXIT_SUCCESS;
 }
 
 /* accepter la nouvelle connection d'un client et lire les données
@@ -401,6 +429,7 @@ int recois_envoie_message(int socketfd) {
 
     //fermer le socket
     close(socketfd);
+    return EXIT_SUCCESS;
 }
 
 int main() {

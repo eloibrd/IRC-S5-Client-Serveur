@@ -34,7 +34,24 @@ L'objectif du projet est de créer un environnement client serveur dans lequel l
     -   [x] couleurs
     -   [x] balises
 
--   [ ] Images BMP
+-   [x] Images BMP
+
+#### Tâche 3 :
+
+**_Missions :_**
+
+-   [x] Contrôle JSON valide
+-   [x] Contrôle message du client correspondant au type de demande
+
+#### Tâche 4 :
+
+**_Missions :_**
+
+-   [x] Operations complexes
+    -   [x] Minimum
+    -   [x] Maximum
+    -   [x] Moyenne
+    -   [] Ecart-Type
 
 ### B. _Fichiers_
 
@@ -57,4 +74,5 @@ L'objectif du projet est de créer un environnement client serveur dans lequel l
 ### E. _Difficulté_
 
 ### F. _Commentaires_
-char * regex= "{\nt{0,}\".*\"\nt{0,}:\nt{0,}\".*\"\nt{0,},\nt{0,}\".*\"\nt{0,}:\nt{0,}[(\".*\"|[0-9]*)]*\nt{0,}}";
+
+char _ regex= "{\nt{0,}\"._\"\nt{0,}:\nt{0,}\"._\"\nt{0,},\nt{0,}\"._\"\nt{0,}:\nt{0,}[(\"._\"|[0-9]_)]\*\nt{0,}}";
