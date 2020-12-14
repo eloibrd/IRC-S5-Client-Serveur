@@ -43,7 +43,7 @@ float moyenne(int *tableau, int const size)
     for(int i=0; i < size; i++){
         value += tableau[i];
     }
-    return value / size;
+    return (float)value / (float)size;
 }
 
 float maximum(int *tableau, int const size) 
@@ -62,7 +62,6 @@ float ecart_type(int *tableau, int const size)
 }
 
 float complexe_operation(char * data){
-    printf("%s",data);
     //parsing datas
     char operateurs[1024];
     // la réinitialisation de l'ensemble des données
@@ -76,11 +75,11 @@ float complexe_operation(char * data){
     char * sep_at = strchr(operateurs, separator);
     if(sep_at != NULL){
         *sep_at = '\0'; 
-        printf("operation demandee : %s", operateurs);
         strcpy(operation, operateurs);
         strcpy(operateurs, sep_at + 1);
     }
-    printf("opération : %s, nombres : %s\n", operation, operateurs);
+
+    printf("opération complexe : %s, nombres : %s\n", operation, operateurs);
     int operateurs_array[100];
     sep_at = strchr(operateurs, separator);
     int cpt = 0;
