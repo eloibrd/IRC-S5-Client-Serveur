@@ -139,7 +139,7 @@ int calculValidator(char * json_string){
 int baliseValidator(char * json_string){
 	int err;
     regex_t compiled_reg;
-    char * regex= "[{]{1}[\s]*\"code\"[\s]*:[\s]*\"balises\"[\s]*,[\s]*\"valeurs\"[\s]*:[\s]*\[[0-9]*(,\".*\")\][\s]*[}]{1}";
+    char * regex= "[{]{1}' '*\"code\"[\\s]*:[\\s]*\"balises\"[\\s]*,[\\s]*\"valeurs\"[\\s]*:[\\s]*\\[[0-9]*(,\".*\")\\][\\s]*[}]{1}";
 
     err = regcomp(&compiled_reg,regex,REG_EXTENDED|REG_NOSUB|REG_ICASE);
     if (err == 0){
