@@ -13,6 +13,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <sys/time.h>
+#include <signal.h>
 
 #include "serveur.h"
 #include "shared.h"
@@ -367,18 +369,8 @@ int recois_balises(int client_socket_fd, char *data) {
  * envoyées par le client. En suite, le serveur envoie un message
  * en retour
  */
-int recois_envoie_message(int socketfd) {
-    struct sockaddr_in client_addr;
+int recois_envoie_message(int client_socket_fd,int pid) {
     char data[1024];
-
-    int client_addr_len = sizeof(client_addr);
-
-    // nouvelle connection de client
-    int client_socket_fd = accept(socketfd, (struct sockaddr *) &client_addr, &client_addr_len);
-    if (client_socket_fd < 0 ) {
-        perror("accept");
-        return(EXIT_FAILURE);
-    }
 
     printf("client connecté\n\n");
     // la réinitialisation de l'ensemble des données
@@ -427,50 +419,86 @@ int recois_envoie_message(int socketfd) {
     }
 
     //fermer le socket
-    close(socketfd);
+    //kill(pid,SIGKILL);
+    close(client_socket_fd);
     return EXIT_SUCCESS;
 }
 
 int main() {
-
-    int socketfd;
+	printf("----- Starting Server ----- \n\n");
+    int socketfd,i;
     int bind_status;
     int client_addr_len;
+    int max_clients=10;
+    int clients_sock[10];
+    int max_sd,sd,activity,new_socket;
+    fd_set readfds;
 
+	
+	for(i=0;i<max_clients;i++){
+		clients_sock[i]=0;
+	}
     struct sockaddr_in server_addr, client_addr;
-
-    /*
-    * Creation d'une socket
-    */
     socketfd = socket(AF_INET, SOCK_STREAM, 0);
     if ( socketfd < 0 ) {
         perror("Unable to open a socket");
         return -1;
     }
-
     int option = 1;
     setsockopt(socketfd, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option));
-
     //détails du serveur (adresse et port)
     memset(&server_addr, 0, sizeof(server_addr));
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(PORT);
     server_addr.sin_addr.s_addr = INADDR_ANY;
-
-    // Relier l'adresse à la socket
+    int master_socket=socketfd;
     bind_status = bind(socketfd, (struct sockaddr *) &server_addr, sizeof(server_addr));
     if (bind_status < 0 ) {
         perror("bind");
         return(EXIT_FAILURE);
     }
-
-    // Écouter les messages envoyés par le client
     listen(socketfd, 10);
-
-    printf("----- Starting Server ----- \n\n");
-
-    //Lire et répondre à une requête client client
-    recois_envoie_message(socketfd);
+    while(1){
+    	FD_ZERO(&readfds);
+    	FD_SET(master_socket,&readfds);
+    	
+    	max_sd=master_socket;
+    	
+    	for(i=0;i<max_clients;i++){
+    		sd = clients_sock[i];
+    		if(sd>0){
+    			FD_SET(sd,&readfds);
+    		}
+    		
+    		if(sd>max_sd){
+    			max_sd=sd;
+    		}
+    	}
+    	
+    	activity= select(max_sd+1,&readfds,NULL,NULL,NULL);
+    	
+    	if(FD_ISSET(master_socket,&readfds)){
+    		struct sockaddr_in client_addr;
+    		client_addr_len = sizeof(client_addr);
+    		// nouvelle connection de client
+    		int client_socket_fd = accept(master_socket, (struct sockaddr *) 	&client_addr, &client_addr_len);
+    		if (client_socket_fd < 0 ) {
+        		perror("accept");
+        		return(EXIT_FAILURE);
+    		}
+ 			for(i=0;i<max_clients;i++){
+ 				if(clients_sock[i]==0){
+ 					clients_sock[i]=client_socket_fd;
+ 					break;
+ 				}
+ 			}
+ 			int pid =fork();
+    		if(pid==0){
+    			recois_envoie_message(client_socket_fd,(int)pid);
+    		}
+    	}
+    }
+    
 
     return 0;
 }
