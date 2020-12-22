@@ -51,7 +51,14 @@ L'objectif du projet est de créer un environnement client serveur dans lequel l
     -   [x] Minimum
     -   [x] Maximum
     -   [x] Moyenne
-    -   [] Ecart-Type
+    -   [X] Ecart-Type
+    
+#### Tâche 5 :
+
+**_Missions :_**
+
+-   [x] Archi multi clients
+-   [] Test unitaires
 
 ### B. _Fichiers_
 
@@ -75,4 +82,4 @@ L'objectif du projet est de créer un environnement client serveur dans lequel l
 
 ### F. _Commentaires_
 
-char _ regex= "{\nt{0,}\"._\"\nt{0,}:\nt{0,}\"._\"\nt{0,},\nt{0,}\"._\"\nt{0,}:\nt{0,}[(\"._\"|[0-9]_)]\*\nt{0,}}";
+
