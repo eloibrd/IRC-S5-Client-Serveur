@@ -55,8 +55,10 @@ L'objectif du projet est de créer un environnement client serveur dans lequel l
     
 #### Tâche 5 :
 
-- Architecture multi clients [X]
-- Test unitaire []
+**_Missions :_**
+
+-   [x] Archi multi clients
+-   [] Test unitaires
 
 ### B. _Fichiers_
 
