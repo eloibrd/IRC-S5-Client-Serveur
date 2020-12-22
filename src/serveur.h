@@ -16,5 +16,9 @@
  * en retour
  */
 int recois_envoie_message(int socketfdn,int pid);
+float moyenne(int *tableau, int const size) ;
+float maximum(int *tableau, int const size) ;
+float minimum(int *tableau) ;
+float ecart_type(int *tableau, int const size) ;
 
 #endif

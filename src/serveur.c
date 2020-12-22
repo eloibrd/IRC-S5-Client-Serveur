@@ -10,6 +10,7 @@
 #include <sys/epoll.h>
 #include <netinet/in.h>
 #include <stdio.h>
+#include <math.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
@@ -61,6 +62,13 @@ float minimum(int *tableau)
 float ecart_type(int *tableau, int const size) 
 {
 	// calcul d'écart-type
+	float moy = moyenne(tableau,size);
+	float ecart_type = 0;
+	 for(int i=0; i < size; i++){
+        ecart_type += (tableau[i]-moy)*(tableau[i]-moy);
+    }
+    ecart_type = ecart_type/size;
+    return sqrt(ecart_type);
 }
 
 float complexe_operation(char * data){
